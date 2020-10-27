@@ -1,0 +1,12 @@
+{
+"isPreorder": true,
+"restaurant":{
+"numberSalePoint": 3,
+}
+}
+{
+"isPreorder": true,
+"restaurant":{
+"numberSalePoint": 3,
+}
+}
