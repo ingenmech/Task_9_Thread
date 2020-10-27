@@ -1,0 +1,10 @@
+Task_9_Thread.iml
+*.class
+/.idea/compiler.xml
+/.idea/dictionaries
+/.idea/jarRepositories.xml
+/.idea/misc.xml
+/.idea/vcs.xml
+/.idea/.gitignore
+/target/
+/src/main/resources/log4j.xml
