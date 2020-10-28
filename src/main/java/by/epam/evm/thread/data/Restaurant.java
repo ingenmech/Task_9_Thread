@@ -11,15 +11,23 @@ public class Restaurant {
 
     private final static Restaurant INSTANCE = new Restaurant();
     private final static int FIRST_ELEMENT = 0;
-    private final static int NUMBER_SALE_POINT = 3;
 
+    private final List<SalePoint> salePoints = new ArrayList<>();
     private final List<Order> orders = new ArrayList<>();
-    private final List<SalePoint> points = new ArrayList<>();
-
-    private final Semaphore semaphore = new Semaphore(NUMBER_SALE_POINT, true);
-
+    private final Semaphore semaphore;
 
     private Restaurant() {
+        salePoints.add(new SalePoint(1));
+        salePoints.add(new SalePoint(2));
+        salePoints.add(new SalePoint(3));
+        semaphore = new Semaphore(salePoints.size(), true);
+        fillOrder();
+    }
+
+    private final void fillOrder(){
+        for (int i = 0; i < 15; i++){
+            orders.add(new Order(1));
+        }
     }
 
     public static Restaurant getInstance() {
@@ -27,12 +35,11 @@ public class Restaurant {
     }
 
     public SalePoint getSalePoint() throws ResourceException {
-
         try {
             semaphore.acquire();
 
-            SalePoint salePoint = points.remove(FIRST_ELEMENT);
-            Order order = this.getOrder();
+            SalePoint salePoint = salePoints.remove(FIRST_ELEMENT);
+            Order order = orders.remove(FIRST_ELEMENT);
             salePoint.addOrder(order);
 
             return salePoint;
@@ -42,13 +49,13 @@ public class Restaurant {
         }
     }
 
-    public void returnSalePoint(SalePoint point) {
-        points.add(point);
+    public void returnSalePoint(SalePoint salepoint) {
+        salePoints.add(salepoint);
         semaphore.release();
     }
 
-    private Order getOrder() {
-        return orders.remove(FIRST_ELEMENT);
+    public int getSizeOrders(){
+        return orders.size();
     }
 
     public void addOrder(Order order) {
