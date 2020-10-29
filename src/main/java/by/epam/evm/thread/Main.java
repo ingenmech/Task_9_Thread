@@ -1,10 +1,13 @@
 package by.epam.evm.thread;
 
-import by.epam.evm.thread.data.*;
+import by.epam.evm.thread.data.JsonCustomerCreator;
+import by.epam.evm.thread.data.Restaurant;
 import by.epam.evm.thread.data.reader.DataException;
 import by.epam.evm.thread.data.reader.DataReader;
 import by.epam.evm.thread.data.reader.FileDataReader;
-import by.epam.evm.thread.model.Visitor;
+import by.epam.evm.thread.model.Customer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -12,14 +15,13 @@ import java.util.concurrent.Executors;
 
 public class Main {
 
-    //TODO
-    //private final static Logger LOGGER
+    private final static Logger LOGGER = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
         try {
             process();
         } catch (DataException e) {
-            //Logger
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -30,11 +32,11 @@ public class Main {
         String jsonData = reader.read(fileName);
 
         Restaurant restaurant = Restaurant.getInstance();
-        JsonVisitorCreator creator = new JsonVisitorCreator(restaurant);
-        List<Visitor> visitors = creator.create(jsonData);
+        JsonCustomerCreator creator = new JsonCustomerCreator(restaurant);
+        List<Customer> customers = creator.create(jsonData);
 
-        ExecutorService service = Executors.newFixedThreadPool(visitors.size());
-        visitors.forEach(visitor -> service.submit(visitor));
+        ExecutorService service = Executors.newFixedThreadPool(customers.size());
+        customers.forEach(customer -> service.submit(customer));
         service.shutdown();
     }
 }

@@ -1,65 +1,91 @@
 package by.epam.evm.thread.data;
 
+import by.epam.evm.thread.model.CashDesk;
 import by.epam.evm.thread.model.Order;
-import by.epam.evm.thread.model.SalePoint;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Restaurant {
 
-    private final static Restaurant INSTANCE = new Restaurant();
-    private final static int FIRST_ELEMENT = 0;
+    private static Restaurant INSTANCE = null;
+    private final static Lock LOCK = new ReentrantLock();
+    private final static Condition IS_FREE = LOCK.newCondition();
 
-    private final List<SalePoint> salePoints = new ArrayList<>();
+    private final static int FIRST_ELEMENT = 0;
+    private final static CashDesk CASH_DESK = new CashDesk();
+    private final static List<CashDesk> CASH_DESKS = new ArrayList<>(Arrays.asList(CASH_DESK, CASH_DESK, CASH_DESK));
+
     private final List<Order> orders = new ArrayList<>();
-    private final Semaphore semaphore;
+    private final Semaphore semaphore = new Semaphore(CASH_DESKS.size(), true);
 
     private Restaurant() {
-        salePoints.add(new SalePoint(1));
-        salePoints.add(new SalePoint(2));
-        salePoints.add(new SalePoint(3));
-        semaphore = new Semaphore(salePoints.size(), true);
-        fillOrder();
-    }
-
-    private final void fillOrder(){
-        for (int i = 0; i < 15; i++){
-            orders.add(new Order(1));
-        }
     }
 
     public static Restaurant getInstance() {
+        Restaurant local = INSTANCE;
+        if (local == null) {
+            LOCK.lock();
+            local = INSTANCE;
+            try {
+                if (local == null) {
+                    local = new Restaurant();
+                    local.initOrders();
+                    INSTANCE = local;
+                    IS_FREE.signalAll();
+                }
+            } finally {
+                LOCK.unlock();
+            }
+        }
         return INSTANCE;
     }
 
-    public SalePoint getSalePoint() throws ResourceException {
-        try {
-            semaphore.acquire();
-
-            SalePoint salePoint = salePoints.remove(FIRST_ELEMENT);
-            Order order = orders.remove(FIRST_ELEMENT);
-            salePoint.addOrder(order);
-
-            return salePoint;
-
-        } catch (InterruptedException e) {
-            throw new ResourceException(e.getMessage(), e);
+    private void initOrders() {
+        for (int i = 0; i < 30; i++) {
+            orders.add(new Order(i));
         }
     }
 
-    public void returnSalePoint(SalePoint salepoint) {
-        salePoints.add(salepoint);
-        semaphore.release();
+    public CashDesk getCashDesk() throws ResourceException {
+
+        LOCK.lock();
+        try {
+            semaphore.acquire();
+
+            CashDesk cashDesk = CASH_DESKS.remove(FIRST_ELEMENT);
+            Order order = orders.remove(FIRST_ELEMENT);
+            cashDesk.addOrder(order);
+
+            IS_FREE.signalAll();
+            return cashDesk;
+
+        } catch (InterruptedException e) {
+            throw new ResourceException(e.getMessage(), e);
+        } finally {
+            LOCK.unlock();
+        }
     }
 
-    public int getSizeOrders(){
+    public void returnCashDesk(CashDesk cashDesk) {
+
+        LOCK.lock();
+        try {
+            CASH_DESKS.add(cashDesk);
+            semaphore.release();
+            IS_FREE.signalAll();
+        } finally {
+            LOCK.unlock();
+        }
+    }
+
+    public int getSizeOrders() {
         return orders.size();
-    }
-
-    public void addOrder(Order order) {
-        orders.add(order);
     }
 
 }

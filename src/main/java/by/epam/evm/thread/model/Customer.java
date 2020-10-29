@@ -7,15 +7,15 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Objects;
 
-public class Visitor implements Runnable {
+public class Customer implements Runnable {
 
-    private final static Logger LOGGER = LogManager.getLogger(Visitor.class);
+    private final static Logger LOGGER = LogManager.getLogger(Customer.class);
     private final int id;
     private final boolean isPreorder;
     private final Restaurant restaurant;
     private Order order;
 
-    public Visitor(int id, boolean isPreorder, Restaurant restaurant) {
+    public Customer(int id, boolean isPreorder, Restaurant restaurant) {
         this.id = id;
         this.isPreorder = isPreorder;
         this.restaurant = restaurant;
@@ -23,15 +23,16 @@ public class Visitor implements Runnable {
 
     @Override
     public void run() {
-        SalePoint salePoint = null;
+
+        CashDesk cashDesk = null;
         try {
-            salePoint = restaurant.getSalePoint();
-            order = salePoint.issueOrder();
+            cashDesk = restaurant.getCashDesk();
+            order = cashDesk.process();
         } catch (ResourceException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
-            if (salePoint != null) {
-                restaurant.returnSalePoint(salePoint);
+            if (cashDesk != null) {
+                restaurant.returnCashDesk(cashDesk);
                 System.out.println(String.format("Visitor %s leave restaurant", id));
             }
         }
@@ -45,11 +46,11 @@ public class Visitor implements Runnable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Visitor visitor = (Visitor) o;
-        return id == visitor.id &&
-                isPreorder == visitor.isPreorder &&
-                Objects.equals(restaurant, visitor.restaurant) &&
-                Objects.equals(order, visitor.order);
+        Customer customer = (Customer) o;
+        return id == customer.id &&
+                isPreorder == customer.isPreorder &&
+                Objects.equals(restaurant, customer.restaurant) &&
+                Objects.equals(order, customer.order);
     }
 
     @Override

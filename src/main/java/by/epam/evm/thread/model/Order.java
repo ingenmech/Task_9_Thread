@@ -3,14 +3,14 @@ package by.epam.evm.thread.model;
 import java.util.Objects;
 
 public class Order {
-    private final int price;
+    private final int id;
 
-    public Order(int price) {
-        this.price = price;
+    public Order(int id) {
+        this.id = id;
     }
 
-    public int getPrice() {
-        return price;
+    public int getId() {
+        return id;
     }
 
     @Override
@@ -22,18 +22,18 @@ public class Order {
             return false;
         }
         Order order = (Order) o;
-        return price == order.price;
+        return id == order.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(price);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
         return "Order{" +
-                "price=" + price +
+                "price=" + id +
                 '}';
     }
 }
