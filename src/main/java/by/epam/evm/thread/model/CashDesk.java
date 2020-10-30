@@ -1,13 +1,10 @@
 package by.epam.evm.thread.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class CashDesk {
 
-    private final static int FIRST_ELEMENT = 0;
-    private final List<Order> orders = new ArrayList<>();
+    private final Deque<Order> orders = new ArrayDeque<>();
 
     public CashDesk() {
     }
@@ -16,8 +13,8 @@ public class CashDesk {
         orders.add(order);
     }
 
-    public Order process() {
-        return orders.remove(FIRST_ELEMENT);
+    public Order pollOrder() {
+        return orders.poll();
     }
 
     @Override

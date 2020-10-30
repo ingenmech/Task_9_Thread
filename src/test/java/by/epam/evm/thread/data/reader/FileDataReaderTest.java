@@ -6,10 +6,9 @@ import org.junit.Test;
 public class FileDataReaderTest {
 
     private final static String FILE_NAME = "src/test/resources/data.json";
-    private final static String EXPECTED =
-            "{  \"customers\": [    {      \"id\": 1,      \"isPreorder\": false    }," +
-                    "    {      \"id\": 2,      \"isPreorder\": false    },   " +
-                    " {      \"id\": 3,      \"isPreorder\": true    }  ]}";
+    private final static String EXPECTED = "{  \"customers\": [    " +
+            "{      \"id\": 1,      \"name\": \"customer\"    }," +
+            "    {      \"id\": 2,      \"name\": \"customer\"    }  ]}";
 
 
     @Test

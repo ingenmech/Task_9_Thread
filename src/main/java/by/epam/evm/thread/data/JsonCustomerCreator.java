@@ -22,16 +22,17 @@ public class JsonCustomerCreator {
         List<Customer> customers = new ArrayList<>();
 
         for (int i = 0; i < arrayCustomers.length(); i++) {
-            JSONObject jsonVisitor = arrayCustomers.getJSONObject(i);
-            Customer customer = buildCustomer(jsonVisitor);
+            JSONObject jsonCustomer = arrayCustomers.getJSONObject(i);
+            Customer customer = buildCustomer(jsonCustomer);
             customers.add(customer);
         }
         return customers;
     }
 
     private Customer buildCustomer(JSONObject object) {
+
         int id = object.getInt("id");
-        boolean isPreorder = object.getBoolean("isPreorder");
-        return new Customer(id, isPreorder, restaurant);
+        String name = object.getString("name");
+        return new Customer(id, name, restaurant);
     }
 }

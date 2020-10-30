@@ -2,15 +2,11 @@
   "customers": [
     {
       "id": 1,
-      "isPreorder": false
+      "name": "customer"
     },
     {
       "id": 2,
-      "isPreorder": false
-    },
-    {
-      "id": 3,
-      "isPreorder": true
+      "name": "customer"
     }
   ]
 }

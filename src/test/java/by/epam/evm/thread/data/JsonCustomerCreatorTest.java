@@ -11,17 +11,15 @@ import java.util.List;
 public class JsonCustomerCreatorTest {
 
     private final static String JSON_DATA = "{  \"customers\": [   " +
-            " {      \"id\": 1,      \"isPreorder\": false    }," +
-            "    {      \"id\": 2,      \"isPreorder\": false    },   " +
-            " {      \"id\": 3,      \"isPreorder\": true    }  ]}";
+            " {      \"id\": 1,      \"name\": \"customer\"    }," +
+            "    {      \"id\": 2,      \"name\": \"customer\"    }  ]}";
 
     @Test
     public void testCreateShouldReturnListVisitorsWhenDataIsCorrect() {
         Restaurant restaurant = Mockito.mock(Restaurant.class);
         List<Customer> expectedCustomers = Arrays.asList(
-                new Customer(1, false, restaurant),
-                new Customer(2, false, restaurant),
-                new Customer(3, true, restaurant)
+                new Customer(1, "customer", restaurant),
+                new Customer(2, "customer", restaurant)
         );
         JsonCustomerCreator creator = new JsonCustomerCreator(restaurant);
 

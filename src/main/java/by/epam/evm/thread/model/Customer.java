@@ -5,19 +5,18 @@ import by.epam.evm.thread.data.Restaurant;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Objects;
-
 public class Customer implements Runnable {
 
     private final static Logger LOGGER = LogManager.getLogger(Customer.class);
+
     private final int id;
-    private final boolean isPreorder;
+    private final String name;
     private final Restaurant restaurant;
     private Order order;
 
-    public Customer(int id, boolean isPreorder, Restaurant restaurant) {
+    public Customer(int id, String name, Restaurant restaurant) {
         this.id = id;
-        this.isPreorder = isPreorder;
+        this.name = name;
         this.restaurant = restaurant;
     }
 
@@ -27,7 +26,7 @@ public class Customer implements Runnable {
         CashDesk cashDesk = null;
         try {
             cashDesk = restaurant.getCashDesk();
-            order = cashDesk.process();
+            order = cashDesk.pollOrder();
         } catch (ResourceException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -47,14 +46,24 @@ public class Customer implements Runnable {
             return false;
         }
         Customer customer = (Customer) o;
-        return id == customer.id &&
-                isPreorder == customer.isPreorder &&
-                Objects.equals(restaurant, customer.restaurant) &&
-                Objects.equals(order, customer.order);
+        if (id != customer.id) {
+            return false;
+        }
+        if (name != null ? !name.equals(customer.name) : customer.name != null) {
+            return false;
+        }
+        if (restaurant != null ? !restaurant.equals(customer.restaurant) : customer.restaurant != null) {
+            return false;
+        }
+        return order != null ? order.equals(customer.order) : customer.order == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, isPreorder, restaurant, order);
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (restaurant != null ? restaurant.hashCode() : 0);
+        result = 31 * result + (order != null ? order.hashCode() : 0);
+        return result;
     }
 }
