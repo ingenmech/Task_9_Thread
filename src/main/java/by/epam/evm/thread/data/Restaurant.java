@@ -17,8 +17,8 @@ public class Restaurant {
     private final static int CASH_DESC_NUMBER = 3;
     private final static int ORDERS_NUMBER = 20;
 
-    private final CashDesk CASH_DESK = new CashDesk();
-    private final Deque<CashDesk> CASH_DESKS = new ArrayDeque<>();
+    private final CashDesk cashDesk = new CashDesk();
+    private final Deque<CashDesk> cashDesks = new ArrayDeque<>();
     private final Deque<Order> orders = new ArrayDeque<>();
     private final Semaphore semaphore = new Semaphore(CASH_DESC_NUMBER, true);
 
@@ -35,7 +35,7 @@ public class Restaurant {
                 if (local == null) {
                     local = new Restaurant();
                     local.initOrders();
-                    local.initCashDesk();
+                    local.initCashDesks();
                     INSTANCE = local;
                 }
             } finally {
@@ -52,10 +52,10 @@ public class Restaurant {
         }
     }
 
-    private void initCashDesk() {
+    private void initCashDesks() {
 
         for (int i = 0; i < CASH_DESC_NUMBER; i++) {
-            CASH_DESKS.add(CASH_DESK);
+            cashDesks.add(cashDesk);
         }
     }
 
@@ -65,7 +65,7 @@ public class Restaurant {
         try {
             semaphore.acquire();
 
-            CashDesk cashDesk = CASH_DESKS.poll();
+            CashDesk cashDesk = cashDesks.poll();
             Order order = orders.poll();
             cashDesk.addOrder(order);
             return cashDesk;
@@ -81,7 +81,7 @@ public class Restaurant {
 
         LOCK.lock();
         try {
-            CASH_DESKS.add(cashDesk);
+            cashDesks.add(cashDesk);
             semaphore.release();
         } finally {
             LOCK.unlock();
