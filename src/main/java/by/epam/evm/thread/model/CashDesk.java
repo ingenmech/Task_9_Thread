@@ -1,6 +1,7 @@
 package by.epam.evm.thread.model;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class CashDesk {
 
@@ -17,16 +18,4 @@ public class CashDesk {
         return orders.poll();
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CashDesk point = (CashDesk) o;
-        return Objects.equals(orders, point.orders);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(orders);
-    }
 }

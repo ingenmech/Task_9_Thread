@@ -1,5 +1,6 @@
 package by.epam.evm.thread.data.reader;
 
+import by.epam.evm.thread.data.DataException;
 import org.junit.Assert;
 import org.junit.Test;
 

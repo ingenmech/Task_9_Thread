@@ -2,7 +2,7 @@ package by.epam.evm.thread;
 
 import by.epam.evm.thread.data.JsonCustomerCreator;
 import by.epam.evm.thread.data.Restaurant;
-import by.epam.evm.thread.data.reader.DataException;
+import by.epam.evm.thread.data.DataException;
 import by.epam.evm.thread.data.reader.DataReader;
 import by.epam.evm.thread.data.reader.FileDataReader;
 import by.epam.evm.thread.model.Customer;

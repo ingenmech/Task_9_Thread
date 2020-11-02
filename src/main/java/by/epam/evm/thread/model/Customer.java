@@ -1,7 +1,10 @@
 package by.epam.evm.thread.model;
 
-import by.epam.evm.thread.data.ResourceException;
+import by.epam.evm.thread.data.DataException;
 import by.epam.evm.thread.data.Restaurant;
+import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,9 +15,11 @@ public class Customer implements Runnable {
     private final int id;
     private final String name;
     private final Restaurant restaurant;
-    private Order order;
 
-    public Customer(int id, String name, Restaurant restaurant) {
+    @JsonCreator
+    public Customer(@JsonProperty("id") int id,
+                    @JsonProperty("name") String name,
+                    @JacksonInject("restaurant") Restaurant restaurant) {
         this.id = id;
         this.name = name;
         this.restaurant = restaurant;
@@ -26,36 +31,26 @@ public class Customer implements Runnable {
         CashDesk cashDesk = null;
         try {
             cashDesk = restaurant.getCashDesk();
-            order = cashDesk.pollOrder();
-        } catch (ResourceException e) {
+            cashDesk.pollOrder();
+        } catch (DataException e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
             if (cashDesk != null) {
                 restaurant.returnCashDesk(cashDesk);
-                System.out.println(String.format("Visitor %s leave restaurant", id));
             }
         }
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
         Customer customer = (Customer) o;
-        if (id != customer.id) {
-            return false;
-        }
-        if (name != null ? !name.equals(customer.name) : customer.name != null) {
-            return false;
-        }
-        if (restaurant != null ? !restaurant.equals(customer.restaurant) : customer.restaurant != null) {
-            return false;
-        }
-        return order != null ? order.equals(customer.order) : customer.order == null;
+
+        if (id != customer.id) return false;
+        if (name != null ? !name.equals(customer.name) : customer.name != null) return false;
+        return restaurant != null ? restaurant.equals(customer.restaurant) : customer.restaurant == null;
     }
 
     @Override
@@ -63,7 +58,6 @@ public class Customer implements Runnable {
         int result = id;
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (restaurant != null ? restaurant.hashCode() : 0);
-        result = 31 * result + (order != null ? order.hashCode() : 0);
         return result;
     }
 }

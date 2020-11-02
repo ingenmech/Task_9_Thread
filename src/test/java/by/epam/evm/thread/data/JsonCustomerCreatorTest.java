@@ -15,7 +15,7 @@ public class JsonCustomerCreatorTest {
             "    {      \"id\": 2,      \"name\": \"customer\"    }  ]}";
 
     @Test
-    public void testCreateShouldReturnListVisitorsWhenDataIsCorrect() {
+    public void testCreateShouldReturnListVisitorsWhenDataValid() throws DataException {
         Restaurant restaurant = Mockito.mock(Restaurant.class);
         List<Customer> expectedCustomers = Arrays.asList(
                 new Customer(1, "customer", restaurant),

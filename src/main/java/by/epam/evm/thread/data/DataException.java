@@ -1,4 +1,4 @@
-package by.epam.evm.thread.data.reader;
+package by.epam.evm.thread.data;
 
 public class DataException extends Exception{
     public DataException(String message) {

@@ -1,24 +1,23 @@
 package by.epam.evm.thread.data.reader;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
+import by.epam.evm.thread.data.DataException;
+
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 public class FileDataReader implements DataReader {
 
     @Override
     public String read(String fileName) throws DataException {
 
-        BufferedReader reader;
         try {
-            reader = new BufferedReader(new FileReader(fileName));
+            Path path = Path.of(fileName);
+            List<String> lines = Files.readAllLines(path);
             StringBuilder builder = new StringBuilder();
-            String readLine = reader.readLine();
+            lines.forEach(line -> builder.append(line));
 
-            while (readLine != null) {
-                builder.append(readLine);
-                readLine = reader.readLine();
-            }
             return builder.toString();
 
         } catch (IOException e) {
